@@ -220,7 +220,7 @@ onlyChargeMultiCarsAtHome = True
 # North American 240V grid. In other words, during car charging, you want your
 # utility meter to show a value close to 0kW meaning no energy is being sent to
 # or from the grid.
-greenEnergyAmpsOffset = 0
+greenEnergyAmpsOffset = -3
 
 # Choose how much debugging info to output.
 # 0 is no output other than errors.
@@ -1281,47 +1281,41 @@ def check_green_energy():
     # displaying download stats. -m 60 prevents the whole
     # operation from taking over 60 seconds.
     
-    # TODO nicer82: check if this works
-    smappeeLogon = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST -d "admin" "http://192.168.1.50/gateway/apipublic/logon"')
-    greenEnergyData = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST -d "loadInstantaneous" "http://192.168.1.50/gateway/apipublic/instantaneous"')
-    smappeeLogoff = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST "http://192.168.1.50/gateway/apipublic/logoff"')
+    # TODO Nicer82: use numbers from SMA inverters directly instead of using smappee. Will be more accurate.
     
-    # TODO nicer82: modify below so right values are taken from the json
-    # In case, greenEnergyData will contain something like this:
-    #   MTU, Time, Power, Cost, Voltage
-    #   Solar,11/11/2017 14:20:43,-2.957,-0.29,124.3
-    # The only part we care about is -2.957 which is negative
-    # kW currently being generated. When 0kW is generated, the
-    # negative disappears so we make it optional in the regex
-    # below.
-    m = re.search(b'^Solar,[^,]+,-?([^, ]+),', greenEnergyData, re.MULTILINE)
-    if(m):
-        solarW = int(float(m.group(1)) * 1000)
-
+    # Nicer82: Adjusted this to work with a Smappee energy monitor. The available watts for charging = home load - solar production.
+    # smappeeDeviceIp is the local IP address of the smappee energy monitor. The smappee energy monitor must be in the same LAN as the TWC device.
+    smappeeDeviceIp = "192.168.1.50"
+    
+    smappeeLogon = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST -d "admin" "http://' + smappeeDeviceIp + '/gateway/apipublic/logon"')
+    smappeeDataStr = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST -d "loadInstantaneous" "http://' + smappeeDeviceIp + '/gateway/apipublic/instantaneous"')
+    smappeeLogoff = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST "http://' + smappeeDeviceIp + '/gateway/apipublic/logoff"')
+    
+    smappeeData = json.loads(smappeeDataStr)
+    newMaxAmpsToDivideAmongSlaves = 0.0
+    
+    for i in smappeeData:
+        # Nicer82: phase3ActivePower, phase4ActivePower and phase5ActivePower contain the solar production values
+        if i['key'] == 'phase3ActivePower' or i['key'] == 'phase4ActivePower' or i['key'] == 'phase5ActivePower':
+            # Smappee reports in milli-Watt consumption, while we need amps of production, so:
+            # / 1000 to go from milli-Watt to Watt
+            # / 230 to go from Watt to Amps (Belgian network is 230V)
+            # * -1 to go from grid consumption to grid production
+            newMaxAmpsToDivideAmongSlaves += int(i['value']) / -230000.0
+        
+    if(newMaxAmpsToDivideAmongSlaves):
         # Use backgroundTasksLock to prevent changing maxAmpsToDivideAmongSlaves
         # if the main thread is in the middle of examining and later using
         # that value.
         backgroundTasksLock.acquire()
-
-        # Watts = Volts * Amps
-        # Car charges at 240 volts in North America so we figure
-        # out how many amps * 240 = solarW and limit the car to
-        # that many amps.
-        maxAmpsToDivideAmongSlaves = (solarW / 240) + \
-                                      greenEnergyAmpsOffset
-
-        if(debugLevel >= 1):
-            print("%s: Solar generating %dW so limit car charging to:\n" \
-                 "          %.2fA + %.2fA = %.2fA.  Charge when above %.0fA (minAmpsPerTWC)." % \
-                 (time_now(), solarW, (solarW / 240),
-                 greenEnergyAmpsOffset, maxAmpsToDivideAmongSlaves,
-                 minAmpsPerTWC))
+        
+        maxAmpsToDivideAmongSlaves = newMaxAmpsToDivideAmongSlaves + greenEnergyAmpsOffset
 
         backgroundTasksLock.release()
     else:
         print(time_now() +
             " ERROR: Can't determine current solar generation from:\n" +
-            str(greenEnergyData))
+            str(smappeeDataStr))
 
 #
 # End functions
