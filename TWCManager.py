@@ -150,7 +150,7 @@ rs485Adapter = '/dev/ttyUSB0'
 # 100 amp breaker * 0.8 = 80 here.
 # IF YOU'RE NOT SURE WHAT TO PUT HERE, ASK THE ELECTRICIAN WHO INSTALLED YOUR
 # CHARGER.
-wiringMaxAmpsAllTWCs = 40
+wiringMaxAmpsAllTWCs = 16
 
 # If all your chargers share a single circuit breaker, set wiringMaxAmpsPerTWC
 # to the same value as wiringMaxAmpsAllTWCs.
@@ -160,7 +160,7 @@ wiringMaxAmpsAllTWCs = 40
 # wiringMaxAmpsAllTWCs.
 # For example, if you have two TWCs each with a 50A breaker, set
 # wiringMaxAmpsPerTWC = 50 * 0.8 = 40 and wiringMaxAmpsAllTWCs = 40 + 40 = 80.
-wiringMaxAmpsPerTWC = 40
+wiringMaxAmpsPerTWC = 16
 
 # https://teslamotorsclub.com/tmc/threads/model-s-gen2-charger-efficiency-testing.78740/#post-1844789
 # says you're using 10.85% more power (91.75/82.77=1.1085) charging at 5A vs 40A,
@@ -192,7 +192,7 @@ wiringMaxAmpsPerTWC = 40
 # can't reach that rate, so charging as fast as your wiring supports is best
 # from that standpoint.  It's not clear how much damage charging at slower
 # rates really does.
-minAmpsPerTWC = 12
+minAmpsPerTWC = 5
 
 # When you have more than one vehicle associated with the Tesla car API and
 # onlyChargeMultiCarsAtHome = True, cars will only be controlled by the API when
@@ -229,7 +229,7 @@ greenEnergyAmpsOffset = 0
 # 9 includes raw RS-485 messages transmitted and received (2-3 per sec)
 # 10 is all info.
 # 11 is more than all info.  ;)
-debugLevel = 1
+debugLevel = 10
 
 # Choose whether to display milliseconds after time on each line of debug info.
 displayMilliseconds = False
@@ -1280,8 +1280,13 @@ def check_green_energy():
     # values or authentication. The -s option prevents curl from
     # displaying download stats. -m 60 prevents the whole
     # operation from taking over 60 seconds.
-    greenEnergyData = run_process('curl -s -m 60 "http://192.168.13.58/history/export.csv?T=1&D=0&M=1&C=1"')
-
+    
+    # TODO nicer82: check if this works
+    smappeeLogon = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST -d "admin" "http://192.168.1.50/gateway/apipublic/logon"')
+    greenEnergyData = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST -d "loadInstantaneous" "http://192.168.1.50/gateway/apipublic/instantaneous"')
+    smappeeLogoff = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST "http://192.168.1.50/gateway/apipublic/logoff"')
+    
+    # TODO nicer82: modify below so right values are taken from the json
     # In case, greenEnergyData will contain something like this:
     #   MTU, Time, Power, Cost, Voltage
     #   Solar,11/11/2017 14:20:43,-2.957,-0.29,124.3
