@@ -26,7 +26,7 @@
 <html>
 <head>
     <title>TWCManager</title>
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico">
 
     <?php /* This tag makes the page fill a mobile phone screen. */ ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
