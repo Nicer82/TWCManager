@@ -11,7 +11,7 @@
     // Point $twcScriptDir to the directory containing the TWCManager.py script.
     // Interprocess Communication with TWCManager.py will not work if this
     // parameter is incorrect.
-    $twcScriptDir = "../";//"/home/pi/TWC/";
+    $twcScriptDir = "/home/pi/TWC/";
 
     // End configuration parameters
     ///////////////////////////////////////////////////////////////////////////
@@ -494,7 +494,7 @@
                 <?php DisplayCheckbox("scheduledAmpsDay[3]", '', '1') ?>We
                 <?php DisplayCheckbox("scheduledAmpsDay[4]", '', '1') ?>Th
                 <?php DisplayCheckbox("scheduledAmpsDay[5]", '', '1') ?>Fr
-                <?php DisplayCheckbox("scheduledAmpsDay[6]", '', '1') ?>Sa
+                <?php DisplayCheckbox("scheduledAmpsDay[6]", '', '1') ?>Sa&nbsp;&nbsp;
             </p>
         </div>
 
