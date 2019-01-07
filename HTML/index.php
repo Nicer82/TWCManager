@@ -36,7 +36,7 @@
     // Initialize Interprocess Communication message queue for sending commands to
     // TWCManager.py script and getting data back.  See notes in TWCManager.py for
     // how IPC works.
-    /*$ipcKey = ftok($twcScriptDir, "T");
+    $ipcKey = ftok($twcScriptDir, "T");
     $ipcQueue = msg_get_queue($ipcKey, 0666);
 
     if(@$_REQUEST['debugTWC'] != '') {
@@ -55,7 +55,7 @@
                     ipcCommand('beginTest=' . $_REQUEST['beginTest']);
                 }
             }
-        }*/
+        }
         ?>
         <form action="index.php" method="get">
             <input type="hidden" name="debugTWC" value="<?=htmlspecialchars($_REQUEST['debugTWC'])?>">
