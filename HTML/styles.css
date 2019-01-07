@@ -2,6 +2,6 @@ body {
 	background:#6B6B6B;
 }
 
-p,h1,h2,h3,h4,h5,h6,h {
+select,button,span,p,h1,h2,h3,h4,h5,h6,h {
 	font-family: "Courier New", Courier, monospace;
 }
