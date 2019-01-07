@@ -1,0 +1,312 @@
+﻿/* Clemado CSS basic stylesheet */
+
+/*  Global */
+
+html {
+	
+}
+
+body {
+	background:#6B6B6B;
+}
+
+/* Headings */
+
+h1,h2,h3,h4,h5,h6	{ font-weight: bold; color: #fff; }
+
+h1 					{ font-size: 24px; }
+h2 					{ font-size: 20px; }
+h3 					{ font-size: 16px; }
+h4 					{ font-size: 14px; }
+h5 					{ font-size: 14px; }
+h6 					{ font-size: 14px; }
+
+h1 img, h2 img, h3 img, h4 img, h5 img, h6 img {
+	margin: 0;
+}
+
+/* Text Elements */
+
+p 			{ color: #fff; font-size: 12px; line-height: 150%; }
+p .left 	{ margin: 1.5em 1.5em 1.5 em 0; padding: 0; }
+p .right	{ margin: 1.5em 0 1.5em 1.5 em; padding: 0; }
+
+a:link 		{ color: #fff; text-decoration:underline; }
+a:visited 	{ color: #fff; text-decoration:underline; }
+a:active 	{ color: #fff; text-decoration:underline; }
+a:focus 	{ color: #fff; text-decoration:underline; }
+a:hover 	{ color: #9BB0B8; text-decoration:underline; }
+
+blockquote	{ color: #fff; font-size: 12px; }
+
+strong		{ font-weight: bold; }
+em			{ font-style: italic; }
+
+/* Images */
+
+/* Lists */
+
+ul			{ }
+ol			{ list-style-type:decimal; }
+
+ul li		{ color: #fff; font-size: 12px; }
+ol li		{ color: #fff; font-size: 12px; }
+
+dl			{ }
+dt			{ }
+dd			{ }
+
+/* Tables */
+
+table			{ width: 100%; }
+
+tr				{ }
+.odd			{ background-color: #eee; }
+.even			{ background-color: #fff; }
+
+th				{ font-weight: bold; }
+thead, th		{ background: #ccc; }
+
+tbody			{ }
+
+th, td, caption	{ }
+caption			{ }
+
+tfoot			{ }
+.tfooter		{ background-color:#ccc; text-align: center; font-style:italic; }
+
+caption			{ background:#efefef; } 
+
+/* Miscellaneous */
+
+sup, sub		{ line-height: 0; }
+
+abbr, acronym	{ border-bottom: 1px dotted #666; }
+address			{ }
+del				{ background: #ffcece; color:#f00; }
+
+code, pre 		{
+	background-color: #ff9;
+	padding: 2px 0px;
+	margin: 4px 25px;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 12px;
+}
+
+/* Containers */
+
+#wrapper 			{ 
+	width: 900px;
+	margin: 0px auto;
+	background-color:#283034
+}
+
+#top {
+	width:100%;
+	border-top:1px solid #A1B6BD;
+}
+#top img {
+	float:left;
+	padding:16px;
+}
+#top p 				{ 
+	color:#fff;
+	font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif; 
+	font-size:30px;
+	font-weight:bold;
+	padding:43px 10px;
+	float:left;
+}
+
+#menu 			    { 
+	clear:both;
+}
+#menu a:link		{ color:#fff; }
+#menu a:visited		{ color:#fff; }
+#menu a:active		{ color:#fff; }
+#menu a:hover		{ color:#fff; }
+#menu a:focus		{ color:#fff; }
+
+#menuitems {
+	display:block;
+	height:50px;
+	background-color:#1E1E1E;
+	list-style:none;
+	border-top:1px solid #9BB0B8;
+	border-bottom:1px solid #9BB0B8;
+}
+#menuitems .menuitem	{ float:left; position:relative; }
+#menuitems .menuitem span {
+	float:left;
+	color:#fff;
+	background-color:#1E1E1E;
+	height:50px;
+	line-height:50px;
+	cursor:default;
+	padding:0px 20px;
+	border-right:1px solid #A1B6BD;
+	width:100px;
+	font-size:14px;
+	
+}
+#menuitems .menuitem span:hover { cursor: hand; cursor: pointer; }
+#menuitems .submenuitems {
+	position:absolute;
+	top:50px;
+	width:240px;
+	display:none;
+	left:0px;
+	font-size:10px;
+	background: #4B5C63;
+	border-top:1px solid #A1B6BD;
+	z-index:100;
+}
+#menuitems .submenuitems ul {
+	list-style:none;
+	float:left;
+	border-left:1px solid #A1B6BD;
+	margin:10px 0px 10px 30px;
+	width:200px;
+}
+#menuitems .submenuitem { width:200px; margin:5px 0; }
+#menuitems .submenuitem a {
+	line-height:20px;
+	color:#fff;
+	padding:5px 10px;
+	width:200px;
+	text-decoration:none;
+}
+#menuitems .submenuitem a:hover{ background:#678792; }
+
+#banner 				{ 
+	clear:both; 
+	width: 100%; 
+	position:relative;
+    height:200px;
+    overflow:visible;
+    border-bottom:1px #9BB0B8 solid;
+}
+#banner img 			{
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:8;
+    /*opacity:0.0;*/ 
+}
+#banner img.active 		{ z-index:10; opacity:1.0; }
+#banner img.last-active { z-index:9; }
+
+#content 			{ float:left; width: 860px; padding:20px; }
+#content h1			{ margin:0 0 20px 0; font-size:24px; border-bottom:1px #CDCDCD solid; padding: 15px 0; width: 860px; }
+#content h2			{ margin:0 0 20px 0; font-size:16px; padding: 5px 0; width: 860px;}
+#content p			{ margin: 16px 0; line-height: 160%; width: 860px; }
+#content ul			{ margin: 16px 0 16px 30px; list-style:square none outside;}
+#content ul li p	{ margin: 0; width: 830px;}
+
+#contentleft		{ float:left; width:430px; overflow:hidden; }
+#contentright		{ float:right; width:430px; overflow:hidden; }
+
+#footer 			{ clear: both; background-color:#1E1E1E; padding:10px 0; border-top:1px solid #A1B6BD; border-bottom:1px solid #A1B6BD;}
+#footer p			{ text-align:center; color:#ffffff; font-size:10px}
+#footer a:link		{ color:#fff; }
+#footer a:visited	{ color:#fff; }
+#footer a:active	{ color:#fff; }
+#footer a:hover		{ color:#fff; }
+#footer a:focus		{ color:#fff; }
+
+/* Layout Extra */
+
+/* Navigation Extra */
+
+/* Forms */
+
+form {
+	text-align:left;
+	margin: 0px;
+}
+form ol {
+	list-style-type:none;
+}
+
+label, submit, input, textarea {
+	border: 0;
+	padding: 0;
+	margin: 0;
+	background: none;
+}
+
+label {
+	float: left;
+	width: 110px;
+	text-align: right;
+	display: block;
+	margin-top: 7px;
+}
+
+input, textarea {
+	border: 1px #fff solid; margin-left: 10px;
+	padding: 5px;
+	font-family:Arial, Helvetica, sans-serif;
+	color:#fff;
+	background-color:#808080
+}
+
+input {
+	width: 280px;
+	margin-bottom: 8px;
+}
+
+textarea {
+	width: 280px;
+	height: 150px;
+	margin-bottom: 16px;
+}
+
+select { }
+
+.submit {
+	width: 90px;
+	height: 25px;
+	font-size: 12px;
+}
+
+#submit {
+	margin-left:220px;
+}
+
+#contactresult {
+	width:860px;
+}
+#contactresult p {
+	margin:5px 0;
+}
+#contactresult ol {
+	list-style-type:none;
+}
+#contactresult li{
+	display:inline;
+}
+#contactresult .label {
+	float:left;
+	text-align:right;
+	font-weight:bold;
+	width:150px;
+
+}
+#contactresult .value {
+	float:right;
+	text-align:left;
+	width:690px;
+}
+
+.error{
+	border-color:#f00;
+}
+label.error,p.error{
+	color:#f00;
+}
+
+
+br {
+	clear: left;
+}
