@@ -25,7 +25,7 @@
 ?><!DOCTYPE html>
 <html>
 <head>
-    <title>TWCManager</title>
+    <title>TWC Manager</title>
     <link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico">
 
     <?php /* This tag makes the page fill a mobile phone screen. */ ?>
