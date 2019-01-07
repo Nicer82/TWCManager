@@ -477,17 +477,19 @@
         </p>
         <div id="scheduledPower">
             <p style="margin-top:0.3em; margin-bottom:0; padding-top:0;">
-                <strong>from</strong>
+                <strong>from:</strong>
                 <?php
                 DisplaySelect('scheduledAmpStartTime', '', $aryHours);
                 ?>
-                <strong>to</strong>
+                <strong>to:</strong>
                 <?php
                 DisplaySelect('scheduledAmpsEndTime', '', $aryHours);
                 ?>
             </p>
             <p style="margin-top:0.3em; margin-bottom:0; padding-top:0;">
-                <strong>on days</strong>
+                <strong>on days:</strong>
+            </p>
+            <p>
                 <?php DisplayCheckbox("scheduledAmpsDay[0]", '', '1') ?>Su
                 <?php DisplayCheckbox("scheduledAmpsDay[1]", '', '1') ?>Mo
                 <?php DisplayCheckbox("scheduledAmpsDay[2]", '', '1') ?>Tu
