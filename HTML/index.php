@@ -27,7 +27,6 @@
 <head>
     <title>TWC Manager</title>
     <link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico">
-    <link href="reset.css" rel="stylesheet" type="text/css" media="screen">
     <link href="styles.css" rel="stylesheet" type="text/css" media="screen">
 
     <?php /* This tag makes the page fill a mobile phone screen. */ ?>
