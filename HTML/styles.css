@@ -22,3 +22,8 @@ input {
 p {
 	font-size: 14px;
 }
+
+#scheduledPower input {
+	padding: 0px;
+	margin: 0px;
+}
