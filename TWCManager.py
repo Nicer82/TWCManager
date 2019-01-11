@@ -686,6 +686,9 @@ def car_api_available(email = None, password = None, charge = None):
                   ' more seconds due to recent error.')
         return False
 
+     if(debugLevel >= 11):
+         print('NICER82: ' + email + ':' + password + ':')
+    
     # Tesla car API info comes from https://timdorr.docs.apiary.io/
     if(carApiBearerToken == '' or carApiTokenExpireTime - now < 30*24*60*60):
         cmd = None
