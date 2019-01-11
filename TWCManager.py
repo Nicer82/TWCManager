@@ -1300,8 +1300,7 @@ def check_green_energy():
             # Smappee reports in milli-Watt consumption, while we need amps of production, so:
             # / 1000 to go from milli-Watt to Watt
             # / 230 to go from Watt to Amps (Belgian network is 230V)
-            # * -1 to go from grid consumption to grid production
-            newMaxAmpsToDivideAmongSlaves += int(i['value']) / -230000.0
+            newMaxAmpsToDivideAmongSlaves += int(i['value']) / 230000.0
         
     if(newMaxAmpsToDivideAmongSlaves):
         # Use backgroundTasksLock to prevent changing maxAmpsToDivideAmongSlaves
