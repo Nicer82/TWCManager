@@ -668,6 +668,9 @@ def car_api_available(email = None, password = None, charge = None):
     now = time.time()
     apiResponseDict = {}
 
+    if(debugLevel >= 11):
+        print('NICER82: ' + email + ':' + password + ':')
+    
     if(now - carApiLastErrorTime < carApiErrorRetryMins*60):
         # It's been under carApiErrorRetryMins minutes since the car API
         # generated an error. To keep strain off Tesla's API servers, wait
@@ -691,8 +694,7 @@ def car_api_available(email = None, password = None, charge = None):
         cmd = None
         apiResponse = b''
 
-        if(debugLevel >= 11):
-            print('NICER82: ' + email + ':' + password + ':')
+        
         
         # If we don't have a bearer token or our refresh token will expire in
         # under 30 days, get a new bearer token.  Refresh tokens expire in 45
