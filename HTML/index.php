@@ -84,6 +84,7 @@
     }
     elseif(@$_REQUEST['submit'] != '') {
         if(@$_REQUEST['email'] != '' && @$_REQUEST['password'] != '') {
+            print 'carApiEmailPassword=' . $_REQUEST['email'] . "\n" . $_REQUEST['password'];
             ipcCommand('carApiEmailPassword=' . $_REQUEST['email'] . "\n" . $_REQUEST['password']);
             // Wait 5 seconds for TWCManager to log in or getStatus will have us show
             // the user/password entry again.
