@@ -25,6 +25,7 @@ p {
 
 #refreshButton {
 	border:0;
+	background-color:#191919;
 }
 #scheduledPower input {
 	margin: 0px 2px 0px 5px;
