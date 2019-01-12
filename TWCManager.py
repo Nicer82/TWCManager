@@ -220,7 +220,7 @@ onlyChargeMultiCarsAtHome = True
 # North American 240V grid. In other words, during car charging, you want your
 # utility meter to show a value close to 0kW meaning no energy is being sent to
 # or from the grid.
-greenEnergyAmpsOffset = 1
+greenEnergyAmpsOffset = -1
 
 # Choose how much debugging info to output.
 # 0 is no output other than errors.
