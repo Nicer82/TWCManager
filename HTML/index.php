@@ -307,7 +307,6 @@
 
                 if($response != '') {
                     $status = explode('`', $response);
-                    print_r($status);
                     $statusIdx = 0;
                     $maxAmpsToDivideAmongSlaves = $status[$statusIdx++];
                     $wiringMaxAmpsAllTWCs = $status[$statusIdx++];
