@@ -6,7 +6,7 @@
     // 0 is no output other than errors.
     // 1 is just the most useful info.
     // 10 is all info.
-    $debugLevel = 10;
+    $debugLevel = 0;
 
     // Point $twcScriptDir to the directory containing the TWCManager.py script.
     // Interprocess Communication with TWCManager.py will not work if this
