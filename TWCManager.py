@@ -1289,6 +1289,7 @@ def check_green_energy():
     
     smappeeLogon = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST -d "admin" "http://' + smappeeDeviceIp + '/gateway/apipublic/logon"')
     smappeeDataStr = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST -d "loadInstantaneous" "http://' + smappeeDeviceIp + '/gateway/apipublic/instantaneous"')
+    print(smappeeDataStr)
     smappeeLogoff = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST "http://' + smappeeDeviceIp + '/gateway/apipublic/logoff"')
     
     smappeeData = json.loads(smappeeDataStr)
