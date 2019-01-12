@@ -220,7 +220,7 @@ onlyChargeMultiCarsAtHome = True
 # North American 240V grid. In other words, during car charging, you want your
 # utility meter to show a value close to 0kW meaning no energy is being sent to
 # or from the grid.
-greenEnergyAmpsOffset = 0
+greenEnergyAmpsOffset = 1
 
 # Choose how much debugging info to output.
 # 0 is no output other than errors.
@@ -1300,7 +1300,8 @@ def check_green_energy():
             # Smappee reports in milli-Watt consumption, while we need amps of production, so:
             # / 1000 to go from milli-Watt to Watt
             # / 230 to go from Watt to Amps (Belgian network is 230V)
-            newMaxAmpsToDivideAmongSlaves += int(i['value']) / 230000.0
+            # / 3 to go from single-phase to 3-phase
+            newMaxAmpsToDivideAmongSlaves += int(i['value']) / 1000.0 / 230.0 / 3.0
         
     if(newMaxAmpsToDivideAmongSlaves):
         # Use backgroundTasksLock to prevent changing maxAmpsToDivideAmongSlaves
