@@ -23,7 +23,7 @@ p {
 	font-size: 14px;
 }
 
-#refresh input {
+#refreshButton {
 	border:0;
 }
 #scheduledPower input {
