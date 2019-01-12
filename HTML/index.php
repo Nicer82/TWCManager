@@ -478,7 +478,7 @@
             ?>
         </td>
         <td valign="middle">
-            <input name="refresh" type="image" alt="Refresh" src="refresh.png" style="margin-left:1em">
+            <input type="image" alt="Refresh" src="refresh.png" style="margin-left:1em">
         </td>
     </tr></table>
     </form>
