@@ -1090,7 +1090,7 @@ def car_api_charge(charge):
                 # Vehicle is not at home, so don't change its charge state.
                 if(debugLevel >= 1):
                     print(time_now() + ': Vehicle ID ' + str(vehicle.ID) +
-                          ' is not at home: ' + str(distance*1000.0) + ' km away.')
+                          ' is not at home: ' + str(distance) + ' km away.')
                 continue
 
             # If you send charge_start/stop less than 1 second after calling
