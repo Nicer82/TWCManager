@@ -119,6 +119,7 @@ import sysv_ipc
 import json
 from datetime import datetime
 import threading
+from math import sin, cos, sqrt, atan2, pi
 
 
 ##########################
@@ -995,6 +996,9 @@ def car_api_available(email = None, password = None, charge = None):
 
     return True
 
+def deg2rad(deg):
+    return deg * pi/180.0
+
 def car_api_charge(charge):
     # Do not call this function directly.  Call by using background thread:
     # queue_background_task({'cmd':'charge', 'charge':<True/False>})
@@ -1056,27 +1060,32 @@ def car_api_charge(charge):
                 homeLat = vehicle.lat
                 homeLon = vehicle.lon
                 save_settings()
+            
+            # Nicer82: Implemented accurate distance calculation using the ‘Haversine’ formula.
+            # The problem with the implementation from cdragon is that if the vehicle is on 
+            # the same lat or long by accident, it will still get reached, which is wrong.
+            # Calculating the distance between the two points is the accurate way.
+            # Set the distance tolerance to 500m in my case.
+            
+            earthDiameter = 6371.0 # Earth diameter in km. Change to 20902231.0 to switch to feet, but also change distanceTolerance in that case to feet.
+            distanceTolerance = 0.5 # Distance tolerated between home and vehicle in km.
 
-            # 1 lat or lon = ~364488.888 feet. The exact feet is different depending
-            # on the value of latitude, but this value should be close enough for
-            # our rough needs.
-            # 1/364488.888 * 10560 = 0.0289.
-            # So if vehicle is within 0289 lat and lon of homeLat/Lon,
-            # it's within ~10560 feet (2 miles) of home and we'll consider it to be
-            # at home.
-            # I originally tried using 0.00548 (~2000 feet) but one night the car
-            # consistently reported being 2839 feet away from home despite being
-            # parked in the exact spot I always park it.  This is very odd because
-            # GPS is supposed to be accurate to within 12 feet.  Tesla phone app
-            # also reports the car is not at its usual address.  I suspect this
-            # is another case of a bug that's been causing car GPS to freeze  the
-            # last couple months.
-            if(abs(homeLat - vehicle.lat) > 0.0289
-               or abs(homeLon - vehicle.lon) > 0.0289):
+            dLat = deg2rad(vehicle.lat-homeLat);  
+            dLon = deg2rad(vehicle.lon-homeLon); 
+
+            a = sin(dLat/2) * sin(dLat/2) + cos(deg2rad(homeLat)) * cos(deg2rad(vehicle.lat)) * sin(dLon/2) * sin(dLon/2)
+            c = 2 * atan2(sqrt(a), sqrt(1-a)); 
+            distance = earthDiameter * c
+            
+            if(distance <= distanceTolerance):
+                if(debugLevel >= 1):
+                    print(time_now() + ': Vehicle ID ' + str(vehicle.ID) +
+                          ' is concidered at home: only ' + str(distance*1000.0) + ' meter away.')
+            else:
                 # Vehicle is not at home, so don't change its charge state.
                 if(debugLevel >= 1):
                     print(time_now() + ': Vehicle ID ' + str(vehicle.ID) +
-                          ' is not at home.  Do not ' + startOrStop + ' charge.')
+                          ' is not at home: ' + str(distance*1000.0) + ' km away.')
                 continue
 
             # If you send charge_start/stop less than 1 second after calling
