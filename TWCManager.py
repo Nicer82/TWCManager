@@ -211,7 +211,7 @@ onlyChargeMultiCarsAtHome = True
 # Nicer82: option to always check for location before sending start/stop charge
 # instructions to the car, independent from onlyChargeMultiCarsAtHome var or how
 # many cars you have
-alwaysOnlyChargeAtHome = True
+alwaysOnlyChargeAtHome = False
 
 # After determining how much green energy is available for charging, we add
 # greenEnergyAmpsOffset to the value. This is most often given a negative value
