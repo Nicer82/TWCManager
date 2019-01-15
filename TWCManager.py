@@ -208,6 +208,11 @@ minAmpsPerTWC = 1
 # a car not at home being stopped from charging by the API.
 onlyChargeMultiCarsAtHome = True
 
+# Nicer82: option to always check for location before sending start/stop charge
+# instructions to the car, independent from onlyChargeMultiCarsAtHome var or how
+# many cars you have
+alwaysOnlyChargeAtHome = True
+
 # After determining how much green energy is available for charging, we add
 # greenEnergyAmpsOffset to the value. This is most often given a negative value
 # equal to the average amount of power consumed by everything other than car
@@ -1043,7 +1048,7 @@ def car_api_charge(charge):
         # more than once per minute.
         carApiLastStartOrStopChargeTime = now
 
-        if(onlyChargeMultiCarsAtHome and len(carApiVehicles) > 1):
+        if(alwaysOnlyChargeAtHome or (onlyChargeMultiCarsAtHome and len(carApiVehicles) > 1)):
             # When multiple cars are enrolled in the car API, only start/stop
             # charging cars parked at home.
 
