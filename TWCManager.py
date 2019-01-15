@@ -1286,23 +1286,27 @@ def check_green_energy():
     # Nicer82: Adjusted this to work with a Smappee energy monitor. The available watts for charging = home load - solar production.
     # smappeeDeviceIp is the local IP address of the smappee energy monitor. The smappee energy monitor must be in the same LAN as the TWC device.
     smappeeDeviceIp = "192.168.1.50"
-    
-    smappeeLogon = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST -d "admin" "http://' + smappeeDeviceIp + '/gateway/apipublic/logon"')
-    smappeeDataStr = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST -d "loadInstantaneous" "http://' + smappeeDeviceIp + '/gateway/apipublic/instantaneous"').decode('utf-8')
-    smappeeLogoff = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST "http://' + smappeeDeviceIp + '/gateway/apipublic/logoff"')
-    
-    smappeeData = json.loads(smappeeDataStr)
     newMaxAmpsToDivideAmongSlaves = 0.0
     
-    for i in smappeeData:
-        # Nicer82: phase3ActivePower, phase4ActivePower and phase5ActivePower contain the solar production values
-        if i['key'] == 'phase3ActivePower' or i['key'] == 'phase4ActivePower' or i['key'] == 'phase5ActivePower':
-            # Smappee reports in milli-Watt consumption, while we need amps of production, so:
-            # / 1000 to go from milli-Watt to Watt
-            # / 230 to go from Watt to Amps (Belgian network is 230V)
-            # / 3 to go from single-phase to 3-phase
-            newMaxAmpsToDivideAmongSlaves += int(i['value']) / 1000.0 / 230.0 / 3.0
+    try:
+        smappeeLogon = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST -d "admin" "http://' + smappeeDeviceIp + '/gateway/apipublic/logon"')
+        smappeeDataStr = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST -d "loadInstantaneous" "http://' + smappeeDeviceIp + '/gateway/apipublic/instantaneous"').decode('utf-8')
+        smappeeLogoff = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST "http://' + smappeeDeviceIp + '/gateway/apipublic/logoff"')
+
+        smappeeData = json.loads(smappeeDataStr)
         
+        for i in smappeeData:
+            # Nicer82: phase3ActivePower, phase4ActivePower and phase5ActivePower contain the solar production values
+            if i['key'] == 'phase3ActivePower' or i['key'] == 'phase4ActivePower' or i['key'] == 'phase5ActivePower':
+                # Smappee reports in milli-Watt consumption, while we need amps of production, so:
+                # / 1000 to go from milli-Watt to Watt
+                # / 230 to go from Watt to Amps (Belgian network is 230V)
+                # / 3 to go from single-phase to 3-phase
+                newMaxAmpsToDivideAmongSlaves += int(i['value']) / 1000.0 / 230.0 / 3.0
+    except:
+        print(time_now() + " ERROR: Can't fetch data from Smappee device " + smappeeDeviceIp)
+        newMaxAmpsToDivideAmongSlaves = 0.0
+              
     if(newMaxAmpsToDivideAmongSlaves):
         # Use backgroundTasksLock to prevent changing maxAmpsToDivideAmongSlaves
         # if the main thread is in the middle of examining and later using
