@@ -193,7 +193,8 @@ wiringMaxAmpsPerTWC = 20
 # can't reach that rate, so charging as fast as your wiring supports is best
 # from that standpoint.  It's not clear how much damage charging at slower
 # rates really does.
-minAmpsPerTWC = 1
+# Nicer82: set to 0 to start charing as soon as there is any surplus energy
+minAmpsPerTWC = 0
 
 # When you have more than one vehicle associated with the Tesla car API and
 # onlyChargeMultiCarsAtHome = True, cars will only be controlled by the API when
@@ -226,7 +227,8 @@ alwaysOnlyChargeAtHome = False
 # North American 240V grid. In other words, during car charging, you want your
 # utility meter to show a value close to 0kW meaning no energy is being sent to
 # or from the grid.
-greenEnergyAmpsOffset = -1
+# Nicer82: I don't use greenEnergyAmpsOffset because we look at the actual home consumption from Smappee
+greenEnergyAmpsOffset = 0
 
 # Choose how much debugging info to output.
 # 0 is no output other than errors.
@@ -1310,7 +1312,9 @@ def check_green_energy():
         smappeeData = json.loads(smappeeDataStr)
         
         for i in smappeeData:
-            # Nicer82: phase3ActivePower, phase4ActivePower and phase5ActivePower contain the solar production values
+            # Nicer82: 
+            # phase0ActivePower, phase1ActivePower and phase2ActivePower contain the consumption values
+            # phase3ActivePower, phase4ActivePower and phase5ActivePower contain the solar production values
             if i['key'] == 'phase3ActivePower' or i['key'] == 'phase4ActivePower' or i['key'] == 'phase5ActivePower':
                 # Smappee reports in milli-Watt consumption, while we need amps of production, so:
                 # / 1000 to go from milli-Watt to Watt
@@ -1324,6 +1328,7 @@ def check_green_energy():
                 # / 3 to go from single-phase to 3-phase
                 newMaxAmpsToDivideAmongSlaves -= int(i['value']) / 1000.0 / 230.0 / 3.0
         
+        # Nicer82: Re-add the currently used amps by TWC, because it is included into phase0ActivePower, phase1ActivePower and phase2ActivePower!
         newMaxAmpsToDivideAmongSlaves += total_amps_actual_all_twcs()
     except:
         print(time_now() + " ERROR: Can't fetch data from Smappee device " + smappeeDeviceIp)
@@ -1335,7 +1340,8 @@ def check_green_energy():
         # that value.
         backgroundTasksLock.acquire()
         
-        maxAmpsToDivideAmongSlaves = newMaxAmpsToDivideAmongSlaves # + greenEnergyAmpsOffset
+        #Nicer82: I don't use greenEnergyAmpsOffset because we look at the actual home consumption from Smappee
+        maxAmpsToDivideAmongSlaves = newMaxAmpsToDivideAmongSlaves
 
         backgroundTasksLock.release()
     else:
