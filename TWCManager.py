@@ -2014,8 +2014,9 @@ class TWCSlave:
         backgroundTasksLock.release()
 
         minAmpsToOffer = minAmpsPerTWC
-        if(self.minAmpsTWCSupports > minAmpsToOffer):
-            minAmpsToOffer = self.minAmpsTWCSupports
+        #Nicer82: Don't take into account the minAmpsTWCSupports, because it will always operate at minAmpsTWCSupports at a minimum
+        #if(self.minAmpsTWCSupports > minAmpsToOffer):
+        #    minAmpsToOffer = self.minAmpsTWCSupports
 
         if(desiredAmpsOffered < minAmpsToOffer):
             if(maxAmpsToDivideAmongSlaves / numCarsCharging > minAmpsToOffer):
