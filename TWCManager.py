@@ -1492,8 +1492,7 @@ class TWCSlave:
     # Protocol 2 TWCs tend to respond to commands sent using protocol 1, so
     # default to that till we know for sure we're talking to protocol 2.
     protocolVersion = 1
-    # Nicer82: Set minAmpsTWCSupports to 0.1, because TWC will always charge at 6A min anyway and this allow to start charging with the smallest surplus.
-    minAmpsTWCSupports = 0.1
+    minAmpsTWCSupports = 6
     masterHeartbeatData = bytearray(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00')
     timeLastRx = time.time()
 
@@ -3063,10 +3062,10 @@ while True:
                     if(slaveTWC.protocolVersion == 1 and slaveTWC.minAmpsTWCSupports == 6):
                         if(len(msg) == 14):
                             slaveTWC.protocolVersion = 1
-                            slaveTWC.minAmpsTWCSupports = 5
+                            slaveTWC.minAmpsTWCSupports = 0.1
                         elif(len(msg) == 16):
                             slaveTWC.protocolVersion = 2
-                            slaveTWC.minAmpsTWCSupports = 6
+                            slaveTWC.minAmpsTWCSupports = 0.1
 
                         if(debugLevel >= 1):
                             print(time_now() + ": Set slave TWC %02X%02X protocolVersion to %d, minAmpsTWCSupports to %d." % \
