@@ -1492,8 +1492,8 @@ class TWCSlave:
     # Protocol 2 TWCs tend to respond to commands sent using protocol 1, so
     # default to that till we know for sure we're talking to protocol 2.
     protocolVersion = 1
-    # Nicer82: Set minAmpsTWCSupports to 0, because TWC will always charge at 6A min anyway and this allow to start charging with the smallest surplus.
-    minAmpsTWCSupports = 0
+    # Nicer82: Set minAmpsTWCSupports to 0.1, because TWC will always charge at 6A min anyway and this allow to start charging with the smallest surplus.
+    minAmpsTWCSupports = 0.1
     masterHeartbeatData = bytearray(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00')
     timeLastRx = time.time()
 
