@@ -1317,6 +1317,14 @@ def check_green_energy():
                 # / 230 to go from Watt to Amps (Belgian network is 230V)
                 # / 3 to go from single-phase to 3-phase
                 newMaxAmpsToDivideAmongSlaves += int(i['value']) / 1000.0 / 230.0 / 3.0
+            elif i['key'] == 'phase0ActivePower' or i['key'] == 'phase1ActivePower' or i['key'] == 'phase2ActivePower':
+                # Smappee reports in milli-Watt consumption, while we need amps of production, so:
+                # / 1000 to go from milli-Watt to Watt
+                # / 230 to go from Watt to Amps (Belgian network is 230V)
+                # / 3 to go from single-phase to 3-phase
+                newMaxAmpsToDivideAmongSlaves -= int(i['value']) / 1000.0 / 230.0 / 3.0
+        
+        newMaxAmpsToDivideAmongSlaves += total_amps_actual_all_twcs()
     except:
         print(time_now() + " ERROR: Can't fetch data from Smappee device " + smappeeDeviceIp)
         newMaxAmpsToDivideAmongSlaves = 0.0
@@ -1327,7 +1335,7 @@ def check_green_energy():
         # that value.
         backgroundTasksLock.acquire()
         
-        maxAmpsToDivideAmongSlaves = newMaxAmpsToDivideAmongSlaves + greenEnergyAmpsOffset
+        maxAmpsToDivideAmongSlaves = newMaxAmpsToDivideAmongSlaves # + greenEnergyAmpsOffset
 
         backgroundTasksLock.release()
     else:
