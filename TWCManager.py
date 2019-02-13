@@ -1492,7 +1492,8 @@ class TWCSlave:
     # Protocol 2 TWCs tend to respond to commands sent using protocol 1, so
     # default to that till we know for sure we're talking to protocol 2.
     protocolVersion = 1
-    minAmpsTWCSupports = 6
+    # Nicer82: Set minAmpsTWCSupports to 0, because TWC will always charge at 6A min anyway and this allow to start charging with the smallest surplus.
+    minAmpsTWCSupports = 0
     masterHeartbeatData = bytearray(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00')
     timeLastRx = time.time()
 
@@ -2028,9 +2029,9 @@ class TWCSlave:
         backgroundTasksLock.release()
 
         minAmpsToOffer = minAmpsPerTWC
-        #Nicer82: Don't take into account the minAmpsTWCSupports, because it will always operate at minAmpsTWCSupports at a minimum
-        #if(self.minAmpsTWCSupports > minAmpsToOffer):
-        #    minAmpsToOffer = self.minAmpsTWCSupports
+        
+        if(self.minAmpsTWCSupports > minAmpsToOffer):
+            minAmpsToOffer = self.minAmpsTWCSupports
 
         if(desiredAmpsOffered < minAmpsToOffer):
             if(maxAmpsToDivideAmongSlaves / numCarsCharging > minAmpsToOffer):
