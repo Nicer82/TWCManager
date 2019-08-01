@@ -227,7 +227,7 @@ alwaysOnlyChargeAtHome = False
 # North American 240V grid. In other words, during car charging, you want your
 # utility meter to show a value close to 0kW meaning no energy is being sent to
 # or from the grid.
-# Nicer82: I don't use greenEnergyAmpsOffset because we look at the actual home consumption from Smappee
+# Nicer82: I don't use greenEnergyAmpsOffset because we look at the actual home consumption from EnergyMonitor
 greenEnergyAmpsOffset = 0
 
 # Choose how much debugging info to output.
@@ -1297,41 +1297,21 @@ def check_green_energy():
     # displaying download stats. -m 60 prevents the whole
     # operation from taking over 60 seconds.
     
-    # TODO Nicer82: use numbers from SMA inverters directly instead of using smappee. Will be more accurate.
-    
-    # Nicer82: Adjusted this to work with a Smappee energy monitor. The available watts for charging = home load - solar production.
-    # smappeeDeviceIp is the local IP address of the smappee energy monitor. The smappee energy monitor must be in the same LAN as the TWC device.
-    smappeeDeviceIp = "192.168.1.50"
+    # Nicer82: Adjusted this to work with an energy monitor. The available watts for charging = home load - solar production.
+    # emDeviceIp is the local IP address of the energy monitor. The energy monitor must be in the same LAN as the TWC device.
+    emDeviceIp = "192.168.1.70:8080"
     newMaxAmpsToDivideAmongSlaves = 0.0
     
     try:
-        smappeeLogon = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST -d "admin" "http://' + smappeeDeviceIp + '/gateway/apipublic/logon"')
-        smappeeDataStr = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST -d "loadInstantaneous" "http://' + smappeeDeviceIp + '/gateway/apipublic/instantaneous"').decode('utf-8')
-        smappeeLogoff = run_process('curl -s -m 60 -H "Content-Type: application/json" -X POST "http://' + smappeeDeviceIp + '/gateway/apipublic/logoff"')
-
-        smappeeData = json.loads(smappeeDataStr)
+        emDataStr = run_process('curl -s -m 60 -H "Content-Type: application/json" "http://' + emDeviceIp + '/state"')
+        emData = json.loads(emDataStr)
         
-        for i in smappeeData:
-            # Nicer82: 
-            # phase0ActivePower, phase1ActivePower and phase2ActivePower contain the consumption values
-            # phase3ActivePower, phase4ActivePower and phase5ActivePower contain the solar production values
-            if i['key'] == 'phase3ActivePower' or i['key'] == 'phase4ActivePower' or i['key'] == 'phase5ActivePower':
-                # Smappee reports in milli-Watt consumption, while we need amps of production, so:
-                # / 1000 to go from milli-Watt to Watt
-                # / 230 to go from Watt to Amps (Belgian network is 230V)
-                # / 3 to go from single-phase to 3-phase
-                newMaxAmpsToDivideAmongSlaves += int(i['value']) / 1000.0 / 230.0 / 3.0
-            elif i['key'] == 'phase0ActivePower' or i['key'] == 'phase1ActivePower' or i['key'] == 'phase2ActivePower':
-                # Smappee reports in milli-Watt consumption, while we need amps of production, so:
-                # / 1000 to go from milli-Watt to Watt
-                # / 230 to go from Watt to Amps (Belgian network is 230V)
-                # / 3 to go from single-phase to 3-phase
-                newMaxAmpsToDivideAmongSlaves -= int(i['value']) / 1000.0 / 230.0 / 3.0
+        newMaxAmpsToDivideAmongSlaves = emData["total_current"]/-3
         
         # Nicer82: Re-add the currently used amps by TWC, because it is included into phase0ActivePower, phase1ActivePower and phase2ActivePower!
         newMaxAmpsToDivideAmongSlaves += total_amps_actual_all_twcs()
     except:
-        print(time_now() + " ERROR: Can't fetch data from Smappee device " + smappeeDeviceIp)
+        print(time_now() + " ERROR: Can't fetch data from energy monitor device " + emDeviceIp)
         newMaxAmpsToDivideAmongSlaves = 0.0
               
     if(newMaxAmpsToDivideAmongSlaves):
@@ -1340,14 +1320,14 @@ def check_green_energy():
         # that value.
         backgroundTasksLock.acquire()
         
-        #Nicer82: I don't use greenEnergyAmpsOffset because we look at the actual home consumption from Smappee
+        #Nicer82: I don't use greenEnergyAmpsOffset because we look at the actual home consumption from energy monitor
         maxAmpsToDivideAmongSlaves = newMaxAmpsToDivideAmongSlaves
 
         backgroundTasksLock.release()
     else:
         print(time_now() +
             " ERROR: Can't determine current solar generation from:\n" +
-            str(smappeeDataStr))
+            str(emDataStr))
 
 #
 # End functions
