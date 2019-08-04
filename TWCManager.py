@@ -1299,7 +1299,7 @@ def check_green_energy():
     
     # Nicer82: Adjusted this to work with an energy monitor. The available watts for charging = home load - solar production.
     # emDeviceIp is the local IP address of the energy monitor. The energy monitor must be in the same LAN as the TWC device.
-    emDeviceIp = "192.168.1.70:8080"
+    emDeviceIp = "192.168.1.55"
     newMaxAmpsToDivideAmongSlaves = 0.0
     
     try:
@@ -1312,7 +1312,6 @@ def check_green_energy():
         newMaxAmpsToDivideAmongSlaves += total_amps_actual_all_twcs()
     except Exception as e:
         print(time_now() + " ERROR: Can't fetch data from energy monitor device " + emDeviceIp)
-        print(e)
         newMaxAmpsToDivideAmongSlaves = 0.0
               
     if(newMaxAmpsToDivideAmongSlaves):
