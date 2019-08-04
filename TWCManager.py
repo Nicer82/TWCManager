@@ -1303,7 +1303,7 @@ def check_green_energy():
     newMaxAmpsToDivideAmongSlaves = 0.0
     
     try:
-        emDataStr = run_process('curl -s -m 60 -H "Content-Type: application/json" "http://' + emDeviceIp + '/state"')
+        emDataStr = run_process('curl -s -m 60 -H "Content-Type: application/json" "http://' + emDeviceIp + '/state"').decode('ascii')
         emData = json.loads(emDataStr)
         
         newMaxAmpsToDivideAmongSlaves = emData["total_current"]/-3
