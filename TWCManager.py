@@ -1310,8 +1310,9 @@ def check_green_energy():
         
         # Nicer82: Re-add the currently used amps by TWC, because it is included into phase0ActivePower, phase1ActivePower and phase2ActivePower!
         newMaxAmpsToDivideAmongSlaves += total_amps_actual_all_twcs()
-    except:
+    except Exception as e:
         print(time_now() + " ERROR: Can't fetch data from energy monitor device " + emDeviceIp)
+        print(e)
         newMaxAmpsToDivideAmongSlaves = 0.0
               
     if(newMaxAmpsToDivideAmongSlaves):
