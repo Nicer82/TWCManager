@@ -194,7 +194,7 @@ wiringMaxAmpsPerTWC = 20
 # from that standpoint.  It's not clear how much damage charging at slower
 # rates really does.
 # Nicer82: set to 0 to start charing as soon as there is any surplus energy
-minAmpsPerTWC = 0
+minAmpsPerTWC = 3
 
 # When you have more than one vehicle associated with the Tesla car API and
 # onlyChargeMultiCarsAtHome = True, cars will only be controlled by the API when
@@ -1311,7 +1311,6 @@ def check_green_energy():
         # Nicer82: Re-add the currently used amps by TWC, because it is included into phase0ActivePower, phase1ActivePower and phase2ActivePower!
         newMaxAmpsToDivideAmongSlaves += total_amps_actual_all_twcs()
     except Exception as e:
-        print(e)
         print(time_now() + " ERROR: Can't fetch data from energy monitor device " + emDeviceIp)
         newMaxAmpsToDivideAmongSlaves = 0.0
               
@@ -1962,7 +1961,7 @@ class TWCSlave:
                 # 8pm. Sunrise in most U.S. areas varies from a little before
                 # 6am in Jun to almost 7:30am in Nov before the clocks get set
                 # back an hour. Sunset can be ~4:30pm to just after 8pm.
-                if(ltNow.tm_hour < 6 or ltNow.tm_hour >= 20):
+                if(ltNow.tm_hour < 5 or ltNow.tm_hour >= 23):
                     maxAmpsToDivideAmongSlaves = 0
                 else:
                     queue_background_task({'cmd':'checkGreenEnergy'})
