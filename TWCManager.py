@@ -1324,7 +1324,7 @@ def check_green_energy():
         newMaxAmpsToDivideAmongSlaves += total_amps_actual_all_twcs()
     except Exception as e:
         print(e)
-        print(time_now() + " ERROR: Can't fetch data from energy monitor database {} on {}:{}".format(emDatabase,emHost,emPort)
+        print(time_now() + " ERROR: Can't fetch data from energy monitor database {} on {}:{}".format(emDatabase,emHost,emPort))
         newMaxAmpsToDivideAmongSlaves = 0.0
               
     if(newMaxAmpsToDivideAmongSlaves):
