@@ -117,6 +117,7 @@ import sys
 import traceback
 import sysv_ipc
 import json
+import mysql.connector
 from datetime import datetime
 import threading
 from math import sin, cos, sqrt, atan2, pi
@@ -227,8 +228,15 @@ alwaysOnlyChargeAtHome = False
 # North American 240V grid. In other words, during car charging, you want your
 # utility meter to show a value close to 0kW meaning no energy is being sent to
 # or from the grid.
-# Nicer82: I don't use greenEnergyAmpsOffset because we look at the actual home consumption from EnergyMonitor
+# Nicer82: I don't use greenEnergyAmpsOffset because we look at the actual home consumption from EnergyMonitor.
 greenEnergyAmpsOffset = 0
+
+# Nicer82: Connection information to connect to the EnergyMonitor database.
+emHost = '192.168.1.2'
+emPort = 3307
+emDatabase = 'EnergyMonitor'
+emUser = 'EnergyMonitor'
+emPassword = 'EnergyMonitor'
 
 # Choose how much debugging info to output.
 # 0 is no output other than errors.
@@ -1297,18 +1305,22 @@ def check_green_energy():
     # displaying download stats. -m 60 prevents the whole
     # operation from taking over 60 seconds.
     
-    # Nicer82: Adjusted this to work with an energy monitor. The available watts for charging = home load - solar production.
-    # emDeviceIp is the local IP address of the energy monitor. The energy monitor must be in the same LAN as the TWC device.
-    emDeviceIp = "192.168.1.55:8080"
+    # Nicer82: Adjusted this to work with an energy monitor. The available power = the last measured volume on the mains point (Usage - Supply).
     newMaxAmpsToDivideAmongSlaves = 0.0
     
     try:
-        emDataStr = run_process('curl -s -m 60 -H "Content-Type: application/json" "http://' + emDeviceIp + '/state/Mains"').decode('ascii')
-        emData = json.loads(emDataStr)
-        
-        newMaxAmpsToDivideAmongSlaves = emData["total_current"]/-3
-        
-        # Nicer82: Re-add the currently used amps by TWC, because it is included into phase0ActivePower, phase1ActivePower and phase2ActivePower!
+        connection = mysql.connector.connect(user=emUser,
+                                             password=emPassword,
+                                             host=emHost,
+                                             port=emPort,
+                                             database=emDatabase)
+        cursor = connection.cursor()
+        cursor.execute("SELECT -TotalAvgW/240/3 AS AvgUsageCurrentPerPhase FROM VolumeData WHERE Point = 'Mains' ORDER BY TimeStamp DESC LIMIT 1")
+        result = cursor.fetchall()
+        newMaxAmpsToDivideAmongSlaves = result[0][0]
+        connection.close()
+            
+        # Nicer82: Re-add the currently used amps by TWC, because it is included into the em data!
         newMaxAmpsToDivideAmongSlaves += total_amps_actual_all_twcs()
     except Exception as e:
         print(time_now() + " ERROR: Can't fetch data from energy monitor device " + emDeviceIp)
