@@ -1317,13 +1317,12 @@ def check_green_energy():
         cursor = connection.cursor()
         cursor.execute("SELECT -TotalAvgW/240/3 AS AvgUsageCurrentPerPhase FROM VolumeData WHERE Point = 'Mains' ORDER BY TimeStamp DESC LIMIT 1")
         result = cursor.fetchall()
-        newMaxAmpsToDivideAmongSlaves = result[0][0]
+        newMaxAmpsToDivideAmongSlaves = float(result[0][0])
         connection.close()
             
         # Nicer82: Re-add the currently used amps by TWC, because it is included into the em data!
         newMaxAmpsToDivideAmongSlaves += total_amps_actual_all_twcs()
     except Exception as e:
-        print(e)
         print(time_now() + " ERROR: Can't fetch data from energy monitor database {} on {}:{}".format(emDatabase,emHost,emPort))
         newMaxAmpsToDivideAmongSlaves = 0.0
               
@@ -1338,9 +1337,7 @@ def check_green_energy():
 
         backgroundTasksLock.release()
     else:
-        print(time_now() +
-            " ERROR: Can't determine current solar generation from:\n" +
-            str(emDataStr))
+        print(time_now() + " ERROR: Can't determine current solar generation")
 
 #
 # End functions
