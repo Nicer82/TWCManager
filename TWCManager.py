@@ -1323,7 +1323,8 @@ def check_green_energy():
         # Nicer82: Re-add the currently used amps by TWC, because it is included into the em data!
         newMaxAmpsToDivideAmongSlaves += total_amps_actual_all_twcs()
     except Exception as e:
-        print(time_now() + " ERROR: Can't fetch data from energy monitor device " + emDeviceIp)
+        print(e)
+        print(time_now() + " ERROR: Can't fetch data from energy monitor database {} on {}:{}".format(emDatabase,emHost,emPort)
         newMaxAmpsToDivideAmongSlaves = 0.0
               
     if(newMaxAmpsToDivideAmongSlaves):
