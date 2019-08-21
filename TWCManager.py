@@ -1318,7 +1318,7 @@ def check_green_energy():
         # Get the last available VolumeData record that is not older then 15 minutes. If data logging would be halted for some reason, we don't want to use outdated data.
         cursor.execute("SELECT -TotalAvgW/240/3 AS AvgUsageCurrentPerPhase FROM VolumeData WHERE Point = 'Mains' AND TimeStamp > DATE_SUB(UTC_TIMESTAMP(),INTERVAL 15 MINUTE) ORDER BY TimeStamp DESC LIMIT 1")
         result = cursor.fetchall()
-        if(result.rowcount == 1):
+        if(cursor.rowcount == 1):
             newMaxAmpsToDivideAmongSlaves = float(result[0][0])
             # Nicer82: Re-add the currently used amps by TWC, because it is included into the em data!
             newMaxAmpsToDivideAmongSlaves += total_amps_actual_all_twcs()
