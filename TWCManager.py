@@ -2176,7 +2176,7 @@ class TWCSlave:
             # one second and 12.0A the next second, the car reduces its power
             # use to ~5.14-5.23A and refuses to go higher. So it seems best to
             # stick with whole amps.
-            desiredAmpsOffered = int(desiredAmpsOffered)
+            desiredAmpsOffered = math.ceil(desiredAmpsOffered)
 
             if(self.lastAmpsOffered == 0
                and now - self.timeLastAmpsOfferedChanged < 60
