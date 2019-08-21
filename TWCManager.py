@@ -1322,7 +1322,7 @@ def check_green_energy():
             newMaxAmpsToDivideAmongSlaves = float(result[0][0])
             # Nicer82: Re-add the currently used amps by TWC, because it is included into the em data!
             newMaxAmpsToDivideAmongSlaves += total_amps_actual_all_twcs()
-        else
+        else:
             print(time_now() + " ERROR: No recent data found on energy monitor database {} on {}:{}".format(emDatabase,emHost,emPort))
             newMaxAmpsToDivideAmongSlaves = 0.0
         connection.close()
