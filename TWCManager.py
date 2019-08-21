@@ -2011,7 +2011,8 @@ class TWCSlave:
 
         # Allocate this slave a fraction of maxAmpsToDivideAmongSlaves divided
         # by the number of cars actually charging.
-        fairShareAmps = int(maxAmpsToDivideAmongSlaves / numCarsCharging)
+        #Nicer82: to use this change with care, but in my case, it works better to round up (math.ceil) instead of down (int).
+        fairShareAmps = int(math.ceil(maxAmpsToDivideAmongSlaves / numCarsCharging))
         if(desiredAmpsOffered > fairShareAmps):
             desiredAmpsOffered = fairShareAmps
 
