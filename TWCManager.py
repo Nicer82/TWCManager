@@ -2011,8 +2011,8 @@ class TWCSlave:
 
         # Allocate this slave a fraction of maxAmpsToDivideAmongSlaves divided
         # by the number of cars actually charging.
-        #Nicer82: to use this change with care, but in my case, it works better to round up (math.ceil) instead of down (int).
-        fairShareAmps = int(math.ceil(maxAmpsToDivideAmongSlaves / numCarsCharging))
+        #Nicer82: to use this change with care, but in my case, it seems to work bettor on a EU charger rounding on 1 digit.
+        fairShareAmps = round(maxAmpsToDivideAmongSlaves / numCarsCharging,1)
         if(desiredAmpsOffered > fairShareAmps):
             desiredAmpsOffered = fairShareAmps
 
@@ -2176,7 +2176,8 @@ class TWCSlave:
             # one second and 12.0A the next second, the car reduces its power
             # use to ~5.14-5.23A and refuses to go higher. So it seems best to
             # stick with whole amps.
-            desiredAmpsOffered = math.ceil(desiredAmpsOffered)
+            #Nicer82: to use this change with care, but in my case, it seems to work bettor on a EU charger rounding on 1 digit.
+            desiredAmpsOffered = round(desiredAmpsOffered,1)
 
             if(self.lastAmpsOffered == 0
                and now - self.timeLastAmpsOfferedChanged < 60
