@@ -1329,6 +1329,7 @@ def check_green_energy():
         
     except Exception as e:
         print(time_now() + " ERROR: Can't fetch data from energy monitor database {} on {}:{}".format(emDatabase,emHost,emPort))
+        print(e)
         newMaxAmpsToDivideAmongSlaves = 0.0
               
     if(newMaxAmpsToDivideAmongSlaves):
