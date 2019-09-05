@@ -682,8 +682,7 @@ def car_api_available(email = None, password = None, charge = None):
            carApiTokenExpireTime, carApiVehicles
 
     now = time.time()
-    apiResponseDict = {}
-    
+    apiResponseDict = {}  
     if(now - carApiLastErrorTime < carApiErrorRetryMins*60):
         # It's been under carApiErrorRetryMins minutes since the car API
         # generated an error. To keep strain off Tesla's API servers, wait
@@ -700,13 +699,11 @@ def car_api_available(email = None, password = None, charge = None):
             print(time_now() + ': Car API disabled for ' +
                   str(int(carApiErrorRetryMins*60 - (now - carApiLastErrorTime))) +
                   ' more seconds due to recent error.')
-        return False
-    
+        return False   
     # Tesla car API info comes from https://timdorr.docs.apiary.io/
     if(carApiBearerToken == '' or carApiTokenExpireTime - now < 30*24*60*60):
         cmd = None
-        apiResponse = b''
-       
+        apiResponse = b''   
         # If we don't have a bearer token or our refresh token will expire in
         # under 30 days, get a new bearer token.  Refresh tokens expire in 45
         # days when first issued, so we'll get a new token every 15 days.
@@ -1075,7 +1072,6 @@ def car_api_charge(charge):
                 homeLat = vehicle.lat
                 homeLon = vehicle.lon
                 save_settings()
-            
             # Nicer82: Implemented accurate distance calculation using the ‘Haversine’ formula.
             # The problem with the implementation from cdragon is that if the vehicle is on 
             # the same lat or long by accident, it will still get reached, which is wrong.
@@ -1304,7 +1300,6 @@ def check_green_energy():
     # values or authentication. The -s option prevents curl from
     # displaying download stats. -m 60 prevents the whole
     # operation from taking over 60 seconds.
-    
     # Nicer82: Adjusted this to work with an energy monitor. The available power = the last measured volume on the mains point (Usage - Supply).
     newMaxAmpsToDivideAmongSlaves = 0.0
     
@@ -1977,7 +1972,8 @@ class TWCSlave:
                 # 8pm. Sunrise in most U.S. areas varies from a little before
                 # 6am in Jun to almost 7:30am in Nov before the clocks get set
                 # back an hour. Sunset can be ~4:30pm to just after 8pm.
-                if(ltNow.tm_hour < 5 or ltNow.tm_hour >= 23):
+                #Nicer82: in Belgium even after 8pm we can still get excess green energy.
+                if(ltNow.tm_hour < 6 or ltNow.tm_hour >= 21):
                     maxAmpsToDivideAmongSlaves = 0
                 else:
                     queue_background_task({'cmd':'checkGreenEnergy'})
@@ -2011,8 +2007,8 @@ class TWCSlave:
 
         # Allocate this slave a fraction of maxAmpsToDivideAmongSlaves divided
         # by the number of cars actually charging.
-        #Nicer82: to use this change with care, but in my case, it seems to work bettor on a EU charger rounding on 1 digit.
-        fairShareAmps = round(maxAmpsToDivideAmongSlaves / numCarsCharging,1)
+        #Nicer82: Round amps instead of using int value to get more accurate amps.
+        fairShareAmps = round(maxAmpsToDivideAmongSlaves / numCarsCharging)
         if(desiredAmpsOffered > fairShareAmps):
             desiredAmpsOffered = fairShareAmps
 
@@ -2025,7 +2021,6 @@ class TWCSlave:
         backgroundTasksLock.release()
 
         minAmpsToOffer = minAmpsPerTWC
-        
         if(self.minAmpsTWCSupports > minAmpsToOffer):
             minAmpsToOffer = self.minAmpsTWCSupports
 
@@ -2176,8 +2171,8 @@ class TWCSlave:
             # one second and 12.0A the next second, the car reduces its power
             # use to ~5.14-5.23A and refuses to go higher. So it seems best to
             # stick with whole amps.
-            #Nicer82: to use this change with care, but in my case, it seems to work bettor on a EU charger rounding on 1 digit.
-            desiredAmpsOffered = round(desiredAmpsOffered,1)
+            #Nicer82: Round amps instead of using int value to get more accurate amps.
+            desiredAmpsOffered = round(desiredAmpsOffered)
 
             if(self.lastAmpsOffered == 0
                and now - self.timeLastAmpsOfferedChanged < 60
@@ -3060,10 +3055,10 @@ while True:
                     if(slaveTWC.protocolVersion == 1 and slaveTWC.minAmpsTWCSupports == 6):
                         if(len(msg) == 14):
                             slaveTWC.protocolVersion = 1
-                            slaveTWC.minAmpsTWCSupports = 0.1
+                            slaveTWC.minAmpsTWCSupports = 5
                         elif(len(msg) == 16):
                             slaveTWC.protocolVersion = 2
-                            slaveTWC.minAmpsTWCSupports = 0.1
+                            slaveTWC.minAmpsTWCSupports = 6
 
                         if(debugLevel >= 1):
                             print(time_now() + ": Set slave TWC %02X%02X protocolVersion to %d, minAmpsTWCSupports to %d." % \
