@@ -1304,7 +1304,7 @@ def check_green_energy():
         response = requests.get("{}?point={}".format(emStateUrl,emPoint))
         responsejson = response.json()
 
-        if(responsejson[emPoint]['time'] > time.time()-15)
+        if(responsejson[emPoint]['time'] > time.time()-15):
             newMaxAmpsToDivideAmongSlaves = float(responsejson[emPoint]['current']/-3)
             # Nicer82: Re-add the currently used amps by TWC, because it is included into the em data!
             newMaxAmpsToDivideAmongSlaves += total_amps_actual_all_twcs()
