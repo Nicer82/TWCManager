@@ -1311,7 +1311,6 @@ def check_green_energy():
         else:
             print(time_now() + " ERROR: No recent data found on energy monitor service {} on point {}".format(emStateUrl,emPoint))
             newMaxAmpsToDivideAmongSlaves = 0.0
-        connection.close()
         
     except Exception as e:
         print(time_now() + " ERROR: Can't fetch data from energy monitor service {} on point {}".format(emStateUrl,emPoint))
