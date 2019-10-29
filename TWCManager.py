@@ -1473,7 +1473,7 @@ class TWCSlave:
     # Protocol 2 TWCs tend to respond to commands sent using protocol 1, so
     # default to that till we know for sure we're talking to protocol 2.
     protocolVersion = 1
-    minAmpsTWCSupports = 6
+    minAmpsTWCSupports = 3
     masterHeartbeatData = bytearray(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00')
     timeLastRx = time.time()
 
