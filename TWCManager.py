@@ -121,7 +121,7 @@ import mysql.connector
 from datetime import datetime
 import threading
 from math import sin, cos, sqrt, atan2, pi
-
+import requests
 
 ##########################
 #
@@ -231,12 +231,9 @@ alwaysOnlyChargeAtHome = False
 # Nicer82: I don't use greenEnergyAmpsOffset because we look at the actual home consumption from EnergyMonitor.
 greenEnergyAmpsOffset = 0
 
-# Nicer82: Connection information to connect to the EnergyMonitor database.
-emHost = '192.168.1.2'
-emPort = 3307
-emDatabase = 'EnergyMonitor'
-emUser = 'EnergyMonitor'
-emPassword = 'EnergyMonitor'
+# Nicer82: Connection information to connect to the EnergyMonitor service.
+emStateUrl = 'http://192.168.1.2/EnergyMonitor/state.php'
+emPoint = 'Mains'
 
 # Choose how much debugging info to output.
 # 0 is no output other than errors.
@@ -1300,30 +1297,24 @@ def check_green_energy():
     # values or authentication. The -s option prevents curl from
     # displaying download stats. -m 60 prevents the whole
     # operation from taking over 60 seconds.
-    # Nicer82: Adjusted this to work with an energy monitor. The available power = the last measured volume on the mains point (Usage - Supply).
+    # Nicer82: Adjusted this to work with an energy monitor. The available current = the last measured current on the mains point as long as its not outdated (older then 15 seconds)
     newMaxAmpsToDivideAmongSlaves = 0.0
     
     try:
-        connection = mysql.connector.connect(user=emUser,
-                                             password=emPassword,
-                                             host=emHost,
-                                             port=emPort,
-                                             database=emDatabase)
-        cursor = connection.cursor()
-        # Get the last available VolumeData record that is not older then 15 minutes. If data logging would be halted for some reason, we don't want to use outdated data.
-        cursor.execute("SELECT -TotalAvgW/240/3 AS AvgUsageCurrentPerPhase FROM VolumeData WHERE Point = 'Mains' AND TimeStamp > DATE_SUB(UTC_TIMESTAMP(),INTERVAL 15 MINUTE) ORDER BY TimeStamp DESC LIMIT 1")
-        result = cursor.fetchall()
-        if(cursor.rowcount == 1):
-            newMaxAmpsToDivideAmongSlaves = float(result[0][0])
+        response = requests.get("{}?point={}".format(emStateUrl,emPoint))
+        responsejson = response.json()
+
+        if(responsejson[emPoint]['time'] > time.time()-15)
+            newMaxAmpsToDivideAmongSlaves = float(responsejson[emPoint]['current']/-3)
             # Nicer82: Re-add the currently used amps by TWC, because it is included into the em data!
             newMaxAmpsToDivideAmongSlaves += total_amps_actual_all_twcs()
         else:
-            print(time_now() + " ERROR: No recent data found on energy monitor database {} on {}:{}".format(emDatabase,emHost,emPort))
+            print(time_now() + " ERROR: No recent data found on energy monitor service {} on point {}".format(emStateUrl,emPoint))
             newMaxAmpsToDivideAmongSlaves = 0.0
         connection.close()
         
     except Exception as e:
-        print(time_now() + " ERROR: Can't fetch data from energy monitor database {} on {}:{}".format(emDatabase,emHost,emPort))
+        print(time_now() + " ERROR: Can't fetch data from energy monitor service {} on point {}".format(emStateUrl,emPoint))
         print(e)
         newMaxAmpsToDivideAmongSlaves = 0.0
               
