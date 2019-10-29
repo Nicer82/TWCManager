@@ -195,7 +195,7 @@ wiringMaxAmpsPerTWC = 20
 # from that standpoint.  It's not clear how much damage charging at slower
 # rates really does.
 # Nicer82: set to 0 to start charing as soon as there is any surplus energy
-minAmpsPerTWC = 3
+minAmpsPerTWC = 1
 
 # When you have more than one vehicle associated with the Tesla car API and
 # onlyChargeMultiCarsAtHome = True, cars will only be controlled by the API when
@@ -1473,7 +1473,7 @@ class TWCSlave:
     # Protocol 2 TWCs tend to respond to commands sent using protocol 1, so
     # default to that till we know for sure we're talking to protocol 2.
     protocolVersion = 1
-    minAmpsTWCSupports = 3
+    minAmpsTWCSupports = 6
     masterHeartbeatData = bytearray(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00')
     timeLastRx = time.time()
 
@@ -3048,7 +3048,7 @@ while True:
                             slaveTWC.minAmpsTWCSupports = 5
                         elif(len(msg) == 16):
                             slaveTWC.protocolVersion = 2
-                            slaveTWC.minAmpsTWCSupports = 3
+                            slaveTWC.minAmpsTWCSupports = 1
 
                         if(debugLevel >= 1):
                             print(time_now() + ": Set slave TWC %02X%02X protocolVersion to %d, minAmpsTWCSupports to %d." % \
