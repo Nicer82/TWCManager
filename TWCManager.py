@@ -195,7 +195,7 @@ wiringMaxAmpsPerTWC = 20
 # from that standpoint.  It's not clear how much damage charging at slower
 # rates really does.
 # Nicer82: set to 0 to start charing as soon as there is any surplus energy
-minAmpsPerTWC = 1
+minAmpsPerTWC = 3
 
 # When you have more than one vehicle associated with the Tesla car API and
 # onlyChargeMultiCarsAtHome = True, cars will only be controlled by the API when
@@ -3048,7 +3048,7 @@ while True:
                             slaveTWC.minAmpsTWCSupports = 5
                         elif(len(msg) == 16):
                             slaveTWC.protocolVersion = 2
-                            slaveTWC.minAmpsTWCSupports = 1
+                            slaveTWC.minAmpsTWCSupports = 3
 
                         if(debugLevel >= 1):
                             print(time_now() + ": Set slave TWC %02X%02X protocolVersion to %d, minAmpsTWCSupports to %d." % \
