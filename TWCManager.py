@@ -122,6 +122,7 @@ import threading
 
 # Nicer82: Required for accurate position determination
 from math import sin, cos, sqrt, atan2, pi
+# Nicer82: Required for accessing EnergyMonitor service
 import requests
 
 ##########################
