@@ -194,8 +194,8 @@ wiringMaxAmpsPerTWC = 20
 # can't reach that rate, so charging as fast as your wiring supports is best
 # from that standpoint.  It's not clear how much damage charging at slower
 # rates really does.
-# Nicer82: set to 0 to start charing as soon as there is any surplus energy
-minAmpsPerTWC = 3
+# Nicer82: set to 6 for my EU charger
+minAmpsPerTWC = 6
 
 # When you have more than one vehicle associated with the Tesla car API and
 # onlyChargeMultiCarsAtHome = True, cars will only be controlled by the API when
@@ -679,7 +679,8 @@ def car_api_available(email = None, password = None, charge = None):
            carApiTokenExpireTime, carApiVehicles
 
     now = time.time()
-    apiResponseDict = {}  
+    apiResponseDict = {}
+    
     if(now - carApiLastErrorTime < carApiErrorRetryMins*60):
         # It's been under carApiErrorRetryMins minutes since the car API
         # generated an error. To keep strain off Tesla's API servers, wait
@@ -696,11 +697,13 @@ def car_api_available(email = None, password = None, charge = None):
             print(time_now() + ': Car API disabled for ' +
                   str(int(carApiErrorRetryMins*60 - (now - carApiLastErrorTime))) +
                   ' more seconds due to recent error.')
-        return False   
+        return False 
+    
     # Tesla car API info comes from https://timdorr.docs.apiary.io/
     if(carApiBearerToken == '' or carApiTokenExpireTime - now < 30*24*60*60):
         cmd = None
         apiResponse = b''   
+        
         # If we don't have a bearer token or our refresh token will expire in
         # under 30 days, get a new bearer token.  Refresh tokens expire in 45
         # days when first issued, so we'll get a new token every 15 days.
@@ -1005,6 +1008,7 @@ def car_api_available(email = None, password = None, charge = None):
 
     return True
 
+#Nicer82: function to convert degrees to radials
 def deg2rad(deg):
     return deg * pi/180.0
 
@@ -3048,7 +3052,7 @@ while True:
                             slaveTWC.minAmpsTWCSupports = 5
                         elif(len(msg) == 16):
                             slaveTWC.protocolVersion = 2
-                            slaveTWC.minAmpsTWCSupports = 3
+                            slaveTWC.minAmpsTWCSupports = 6
 
                         if(debugLevel >= 1):
                             print(time_now() + ": Set slave TWC %02X%02X protocolVersion to %d, minAmpsTWCSupports to %d." % \
