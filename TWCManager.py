@@ -1957,7 +1957,7 @@ class TWCSlave:
         else:
             if(nonScheduledAmpsMax > -1):
                 maxAmpsToDivideAmongSlaves = nonScheduledAmpsMax
-            elif(now - timeLastGreenEnergyCheck > 60):
+            elif(now - timeLastGreenEnergyCheck > 10):
                 timeLastGreenEnergyCheck = now
 
                 # Don't bother to check solar generation before 6am or after
