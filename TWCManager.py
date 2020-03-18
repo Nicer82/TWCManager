@@ -120,6 +120,7 @@ import json
 from datetime import datetime
 import threading
 
+# Nicer82: Required for accurate position determination
 from math import sin, cos, sqrt, atan2, pi
 import requests
 
@@ -152,6 +153,7 @@ rs485Adapter = '/dev/ttyUSB0'
 # 100 amp breaker * 0.8 = 80 here.
 # IF YOU'RE NOT SURE WHAT TO PUT HERE, ASK THE ELECTRICIAN WHO INSTALLED YOUR
 # CHARGER.
+# Nicer82: 20A is the limit of my grid meter. To be re-evaluated with new digital meter placement.
 wiringMaxAmpsAllTWCs = 20
 
 # If all your chargers share a single circuit breaker, set wiringMaxAmpsPerTWC
@@ -162,7 +164,8 @@ wiringMaxAmpsAllTWCs = 20
 # wiringMaxAmpsAllTWCs.
 # For example, if you have two TWCs each with a 50A breaker, set
 # wiringMaxAmpsPerTWC = 50 * 0.8 = 40 and wiringMaxAmpsAllTWCs = 40 + 40 = 80.
-wiringMaxAmpsPerTWC = 20
+# Nicer82: Charger is on single circuit breaker
+wiringMaxAmpsPerTWC = wiringMaxAmpsAllTWCs
 
 # https://teslamotorsclub.com/tmc/threads/model-s-gen2-charger-efficiency-testing.78740/#post-1844789
 # says you're using 10.85% more power (91.75/82.77=1.1085) charging at 5A vs 40A,
@@ -209,11 +212,6 @@ minAmpsPerTWC = 6
 # set onlyChargeMultiCarsAtHome = False, but you may encounter the problem of
 # a car not at home being stopped from charging by the API.
 onlyChargeMultiCarsAtHome = True
-
-# Nicer82: option to always check for location before sending start/stop charge
-# instructions to the car, independent from onlyChargeMultiCarsAtHome var or how
-# many cars you have
-alwaysOnlyChargeAtHome = False
 
 # After determining how much green energy is available for charging, we add
 # greenEnergyAmpsOffset to the value. This is most often given a negative value
@@ -696,8 +694,8 @@ def car_api_available(email = None, password = None, charge = None):
             print(time_now() + ': Car API disabled for ' +
                   str(int(carApiErrorRetryMins*60 - (now - carApiLastErrorTime))) +
                   ' more seconds due to recent error.')
-        return False 
-    
+        return False
+
     # Tesla car API info comes from https://timdorr.docs.apiary.io/
     if(carApiBearerToken == '' or carApiTokenExpireTime - now < 30*24*60*60):
         cmd = None
@@ -1007,7 +1005,7 @@ def car_api_available(email = None, password = None, charge = None):
 
     return True
 
-#Nicer82: function to convert degrees to radials
+# Nicer82: Required function for accurate position determination
 def deg2rad(deg):
     return deg * pi/180.0
 
@@ -1055,7 +1053,7 @@ def car_api_charge(charge):
         # more than once per minute.
         carApiLastStartOrStopChargeTime = now
 
-        if(alwaysOnlyChargeAtHome or (onlyChargeMultiCarsAtHome and len(carApiVehicles) > 1)):
+        if(onlyChargeMultiCarsAtHome and len(carApiVehicles) > 1):
             # When multiple cars are enrolled in the car API, only start/stop
             # charging cars parked at home.
 
