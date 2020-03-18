@@ -117,9 +117,9 @@ import sys
 import traceback
 import sysv_ipc
 import json
-import mysql.connector
 from datetime import datetime
 import threading
+
 from math import sin, cos, sqrt, atan2, pi
 import requests
 
@@ -228,7 +228,6 @@ alwaysOnlyChargeAtHome = False
 # North American 240V grid. In other words, during car charging, you want your
 # utility meter to show a value close to 0kW meaning no energy is being sent to
 # or from the grid.
-# Nicer82: I don't use greenEnergyAmpsOffset because we look at the actual home consumption from EnergyMonitor.
 greenEnergyAmpsOffset = 0
 
 # Nicer82: Connection information to connect to the EnergyMonitor service.
@@ -680,7 +679,7 @@ def car_api_available(email = None, password = None, charge = None):
 
     now = time.time()
     apiResponseDict = {}
-    
+
     if(now - carApiLastErrorTime < carApiErrorRetryMins*60):
         # It's been under carApiErrorRetryMins minutes since the car API
         # generated an error. To keep strain off Tesla's API servers, wait
@@ -702,8 +701,8 @@ def car_api_available(email = None, password = None, charge = None):
     # Tesla car API info comes from https://timdorr.docs.apiary.io/
     if(carApiBearerToken == '' or carApiTokenExpireTime - now < 30*24*60*60):
         cmd = None
-        apiResponse = b''   
-        
+        apiResponse = b''
+
         # If we don't have a bearer token or our refresh token will expire in
         # under 30 days, get a new bearer token.  Refresh tokens expire in 45
         # days when first issued, so we'll get a new token every 15 days.
@@ -1966,8 +1965,7 @@ class TWCSlave:
                 # 8pm. Sunrise in most U.S. areas varies from a little before
                 # 6am in Jun to almost 7:30am in Nov before the clocks get set
                 # back an hour. Sunset can be ~4:30pm to just after 8pm.
-                #Nicer82: in Belgium even after 8pm we can still get excess green energy.
-                if(ltNow.tm_hour < 6 or ltNow.tm_hour >= 21):
+                if(ltNow.tm_hour < 6 or ltNow.tm_hour >= 20):
                     maxAmpsToDivideAmongSlaves = 0
                 else:
                     queue_background_task({'cmd':'checkGreenEnergy'})
